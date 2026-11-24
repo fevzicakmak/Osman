@@ -730,6 +730,18 @@ color:#f1dfaa;
 @media (prefers-reduced-motion:reduce){
 *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;}
 }
+#printReport{display:none;}
+@media print{
+@page{size:A4;margin:14mm;}
+body{display:block;background:white;color:#182620;}
+body > :not(#printReport){display:none!important;}
+#printReport{display:block;font:11pt Arial,sans-serif;}
+#printReport h1{font-size:20pt;margin:0 0 5mm;}
+#printReport table{width:100%;border-collapse:collapse;table-layout:fixed;}
+#printReport thead{display:table-header-group;}
+#printReport tr{break-inside:avoid;}
+#printReport th,#printReport td{border-bottom:1px solid #cbd5cf;padding:2mm;text-align:left;overflow-wrap:anywhere;}
+}
 </style>
 </head>
 
@@ -754,6 +766,7 @@ color:#f1dfaa;
 <div class="header-actions" role="group" aria-label="Portföy araçları">
 <button class="header-action-button" type="button" onclick="openAnalysisModal()">Portföy Analizi</button>
 <button class="header-action-button" type="button" aria-haspopup="dialog" aria-controls="backupDialog" onclick="document.getElementById('backupDialog').showModal()">Yedekleme</button>
+<button class="header-action-button" type="button" aria-haspopup="dialog" aria-controls="reportDialog" onclick="openReportDialog()">Çıktı Al</button>
 </div>
 </div>
 </header>
@@ -876,6 +889,20 @@ color:#f1dfaa;
 <button class="action-button secondary" autofocus>Kapat</button>
 </form>
 </dialog>
+
+<dialog class="backup-dialog" id="reportDialog" aria-labelledby="reportDialogTitle">
+<h2 class="card-title" id="reportDialogTitle">Çıktı Al</h2>
+<p class="backup-copy" id="reportScope"></p>
+<div class="backup-actions">
+<button class="action-button secondary" type="button" onclick="printPortfolioReport()">Yazdır</button>
+<button class="action-button info" type="button" onclick="downloadPortfolioPdf()">PDF Olarak Kaydet</button>
+</div>
+<p class="backup-copy" id="reportError" role="status"></p>
+<form method="dialog" class="backup-dialog-close">
+<button class="action-button secondary" autofocus>Kapat</button>
+</form>
+</dialog>
+<section id="printReport"></section>
 
 <div class="backup-toast" id="backupToast" role="status" aria-live="polite"><span id="backupToastMessage"></span><button type="button" aria-label="Bildirimi kapat" onclick="hideBackupToast()">×</button></div>
 
@@ -1003,6 +1030,149 @@ applyBackupDocument(documentData)
 setBackupStatus(error.message||"Yedek dosyası okunamadı.","error")
 }finally{
 event.target.value=""
+}
+}
+
+const reportHeaders=["Hisse","Tarih","İşlem","Lot","Birim fiyat","Toplam"]
+
+function portfolioReport(){
+const selected=portfolio[currentStock]?currentStock:null
+const stocks=selected?[[selected,portfolio[selected]]]:Object.entries(portfolio)
+const rows=stocks.flatMap(([name,stock])=>{
+const transactions=selected&&transactionLimit!==null?stock.transactions.slice(-transactionLimit):stock.transactions
+return transactions.map(t=>[name,t.date,t.type==="buy"?"Alış":"Satış",format(t.qty),formatCurrency(t.unitPrice),formatCurrency(t.totalAmount)])
+})
+const scope=selected?(selected+" · "+(transactionLimit===null?"Tüm işlemler":"Son "+transactionLimit+" işlem")):"Tüm portföy"
+return {scope,rows,date:new Date().toLocaleDateString("tr-TR")}
+}
+
+function openReportDialog(){
+document.getElementById("reportScope").textContent=portfolioReport().scope
+document.getElementById("reportError").textContent=""
+document.getElementById("reportDialog").showModal()
+}
+
+function printPortfolioReport(){
+const report=portfolioReport()
+const printSection=document.getElementById("printReport")
+const title=document.createElement("h1")
+title.textContent="Osman | Portföy İşlem Raporu"
+const scope=document.createElement("p")
+scope.textContent=report.scope+" · "+report.date
+printSection.replaceChildren(title,scope)
+const table=document.createElement("table")
+const heading=table.createTHead().insertRow()
+reportHeaders.forEach(label=>{
+const cell=document.createElement("th")
+cell.scope="col"
+cell.textContent=label
+heading.append(cell)
+})
+const body=table.createTBody()
+if(!report.rows.length){
+const cell=body.insertRow().insertCell()
+cell.colSpan=reportHeaders.length
+cell.textContent="Gösterilecek işlem yok."
+}
+report.rows.forEach(values=>{
+const row=body.insertRow()
+values.forEach(value=>{row.insertCell().textContent=value})
+})
+printSection.append(table)
+document.getElementById("reportDialog").close()
+window.print()
+}
+
+function reportPdf(report){
+const canvas=document.createElement("canvas")
+canvas.width=1190
+canvas.height=1684
+const context=canvas.getContext("2d")
+const columns=[56,286,446,590,744,932,1134]
+const rowsPerPage=34
+const pages=Math.max(1,Math.ceil(report.rows.length/rowsPerPage))
+const encoder=new TextEncoder()
+const chunks=[]
+const offsets=[0]
+let bytes=0
+
+function append(value){
+const chunk=typeof value==="string"?encoder.encode(value):value
+chunks.push(chunk)
+bytes+=chunk.length
+}
+
+function object(id,value){
+offsets[id]=bytes
+append(id+" 0 obj\n")
+append(value)
+append("\nendobj\n")
+}
+
+append("%PDF-1.4\n")
+object(1,"<< /Type /Catalog /Pages 2 0 R >>")
+const pageIds=Array.from({length:pages},(_,index)=>3+index*3)
+object(2,"<< /Type /Pages /Count "+pages+" /Kids ["+pageIds.map(id=>id+" 0 R").join(" ")+"] >>")
+
+pageIds.forEach((id,index)=>{
+context.fillStyle="#fff"
+context.fillRect(0,0,canvas.width,canvas.height)
+context.fillStyle="#164f3b"
+context.font="bold 38px Arial, sans-serif"
+context.fillText("Osman | Portföy İşlem Raporu",56,89)
+context.fillStyle="#26362f"
+context.font="25px Arial, sans-serif"
+context.fillText(report.scope+" · "+report.date,56,133,1078)
+const drawRow=(values,y)=>values.forEach((value,column)=>{
+context.fillText(String(value??""),columns[column]+8,y,columns[column+1]-columns[column]-16)
+})
+context.fillStyle="#e9f1ec"
+context.fillRect(56,164,1078,46)
+context.fillStyle="#164f3b"
+context.font="bold 24px Arial, sans-serif"
+drawRow(reportHeaders,195)
+context.font="24px Arial, sans-serif"
+const rows=report.rows.slice(index*rowsPerPage,(index+1)*rowsPerPage)
+rows.forEach((row,position)=>{
+const y=210+position*39
+context.fillStyle=position%2?"#f4f7f5":"#fff"
+context.fillRect(56,y,1078,39)
+context.fillStyle="#182620"
+drawRow(row,y+27)
+})
+if(!rows.length)context.fillText("Gösterilecek işlem yok.",64,252)
+context.fillStyle="#53645a"
+context.fillText("Sayfa "+(index+1)+" / "+pages,56,1607)
+const jpeg=Uint8Array.from(atob(canvas.toDataURL("image/jpeg",.9).split(",")[1]),char=>char.charCodeAt(0))
+object(id,"<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /XObject << /Im0 "+(id+2)+" 0 R >> >> /Contents "+(id+1)+" 0 R >>")
+const commands="q\n595 0 0 842 0 0 cm\n/Im0 Do\nQ\n"
+object(id+1,"<< /Length "+commands.length+" >>\nstream\n"+commands+"endstream")
+offsets[id+2]=bytes
+append((id+2)+" 0 obj\n<< /Type /XObject /Subtype /Image /Width 1190 /Height 1684 /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length "+jpeg.length+" >>\nstream\n")
+append(jpeg)
+append("\nendstream\nendobj\n")
+})
+const xref=bytes
+append("xref\n0 "+offsets.length+"\n0000000000 65535 f \n")
+offsets.slice(1).forEach(offset=>append(String(offset).padStart(10,"0")+" 00000 n \n"))
+append("trailer\n<< /Size "+offsets.length+" /Root 1 0 R >>\nstartxref\n"+xref+"\n%%EOF\n")
+return new Blob(chunks,{type:"application/pdf"})
+}
+
+function downloadPortfolioPdf(){
+const status=document.getElementById("reportError")
+status.textContent=""
+try{
+const url=URL.createObjectURL(reportPdf(portfolioReport()))
+const link=document.createElement("a")
+link.href=url
+link.download="osman-portfoy-raporu.pdf"
+document.body.append(link)
+link.click()
+link.remove()
+setTimeout(()=>URL.revokeObjectURL(url),30000)
+}catch(error){
+status.textContent="PDF oluşturulamadı. Yazdır seçeneğini kullanabilirsiniz."
 }
 }
 
