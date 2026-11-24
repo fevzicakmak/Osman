@@ -79,7 +79,12 @@ letter-spacing:-.03em;
 .header-actions{
 display:flex;
 gap:8px;
+min-width:0;
+max-width:100%;
 margin-left:auto;
+padding:4px;
+overflow-x:auto;
+overscroll-behavior-inline:contain;
 }
 
 .header-action-button{
@@ -744,7 +749,7 @@ color:#f1dfaa;
 <p class="eyebrow">Osman Karaoğlu'na Özel</p>
 <h1>Portföy Yönetimi</h1>
 </div>
-<div class="header-actions">
+<div class="header-actions" role="group" aria-label="Portföy araçları">
 <button class="header-action-button" type="button" onclick="openAnalysisModal()">Portföy Analizi</button>
 <button class="header-action-button" type="button" aria-haspopup="dialog" aria-controls="backupDialog" onclick="document.getElementById('backupDialog').showModal()">Yedekleme</button>
 </div>
