@@ -75,7 +75,15 @@ font-size:22px;
 letter-spacing:-.03em;
 }
 
-.header-backup-button{
+.header-inner{flex-wrap:wrap;}
+
+.header-actions{
+display:flex;
+gap:8px;
+margin-left:auto;
+}
+
+.header-action-button{
 flex:0 0 auto;
 width:auto;
 min-height:44px;
@@ -89,7 +97,7 @@ font-size:13px;
 white-space:nowrap;
 }
 
-.header-backup-button:hover{background:#307b60;}
+.header-action-button:hover{background:#307b60;}
 
 .container{width:min(100%,680px);margin:0 auto;padding:18px max(14px,env(safe-area-inset-right)) calc(32px + env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-left));}
 
@@ -737,7 +745,10 @@ color:#f1dfaa;
 <p class="eyebrow">Osman Karaoğlu'na Özel</p>
 <h1>Portföy Yönetimi</h1>
 </div>
-<button class="header-backup-button" type="button" aria-haspopup="dialog" aria-controls="backupDialog" onclick="document.getElementById('backupDialog').showModal()">Yedekleme</button>
+<div class="header-actions">
+<button class="header-action-button" type="button" onclick="openAnalysisModal()">Portföy Analizi</button>
+<button class="header-action-button" type="button" aria-haspopup="dialog" aria-controls="backupDialog" onclick="document.getElementById('backupDialog').showModal()">Yedekleme</button>
+</div>
 </div>
 </header>
 
@@ -798,7 +809,6 @@ color:#f1dfaa;
 </div>
 
 <div class="card">
-<button class="action-button info" onclick="openAnalysisModal()">Portföy Analizi</button>
 </div>
 
 <div class="card">
