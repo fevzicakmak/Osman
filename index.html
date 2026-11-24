@@ -1,0 +1,1427 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#164f3b">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Borsa26">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon.png">
+<title>Osman Karaoğlu | Portföy</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap');
+
+:root{
+--ink:#13231d;
+--muted:#68766f;
+--surface:#ffffff;
+--canvas:#eef2ee;
+--line:#dce4df;
+--primary:#164f3b;
+--primary-strong:#0d3a2a;
+--accent:#c6a969;
+--danger:#a53f3f;
+--shadow:0 18px 50px rgba(24,55,43,.09);
+}
+
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+
+body{
+margin:0;
+font-family:"DM Sans",sans-serif;
+color:var(--ink);
+background:
+radial-gradient(circle at 100% 0%,rgba(198,169,105,.16),transparent 32%),
+linear-gradient(180deg,#f7f8f5 0%,var(--canvas) 100%);
+min-height:100vh;
+min-height:100dvh;
+overscroll-behavior-y:none;
+}
+
+.header{
+background:var(--primary);
+color:white;
+padding:calc(22px + env(safe-area-inset-top)) 18px 24px;
+border-radius:0 0 26px 26px;
+box-shadow:0 12px 30px rgba(13,58,42,.18);
+}
+
+.header-inner{
+width:min(100%,680px);
+margin:0 auto;
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:16px;
+}
+
+.eyebrow{
+margin:0 0 3px;
+font-size:11px;
+font-weight:700;
+letter-spacing:.16em;
+text-transform:uppercase;
+color:#d8c58f;
+}
+
+.header h1{
+margin:0;
+font-family:"Manrope",sans-serif;
+font-size:22px;
+letter-spacing:-.03em;
+}
+
+.profile-mark{
+width:46px;
+height:46px;
+display:grid;
+place-items:center;
+flex:0 0 46px;
+border:1px solid rgba(255,255,255,.25);
+border-radius:15px;
+background:rgba(255,255,255,.1);
+font-family:"Manrope",sans-serif;
+font-weight:800;
+color:#f4e5b9;
+}
+
+.container{width:min(100%,680px);margin:0 auto;padding:18px max(14px,env(safe-area-inset-right)) calc(32px + env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-left));}
+
+.install-card{
+display:none;
+position:relative;
+overflow:hidden;
+padding:16px 46px 16px 16px;
+border-color:rgba(198,169,105,.48);
+background:linear-gradient(145deg,#fffdf7,#f4f7f3);
+}
+
+.install-card.is-visible{display:grid;grid-template-columns:42px minmax(0,1fr);gap:12px;align-items:start;}
+.install-icon{width:42px;height:42px;display:grid;place-items:center;border-radius:13px;background:var(--primary);color:#ead9a8;}
+.install-icon svg{width:21px;height:21px;}
+.install-copy h2{margin:1px 0 5px;font-family:"Manrope",sans-serif;font-size:14px;}
+.install-copy p{margin:0;color:var(--muted);font-size:12px;line-height:1.55;}
+.install-copy strong{color:var(--primary-strong);}
+.install-dismiss{position:absolute;top:8px;right:8px;width:34px;min-width:34px;min-height:34px;height:34px;margin:0;padding:0;border-radius:10px;background:transparent;color:var(--muted);font-size:22px;line-height:1;}
+.install-dismiss:hover{background:#edf1ee;color:var(--ink);box-shadow:none;}
+
+.card{
+background:rgba(255,255,255,.94);
+padding:18px;
+margin-bottom:14px;
+border:1px solid rgba(220,228,223,.9);
+border-radius:20px;
+box-shadow:var(--shadow);
+}
+
+.card-title{
+margin:0 0 14px;
+font-family:"Manrope",sans-serif;
+font-size:15px;
+letter-spacing:-.01em;
+}
+
+.row{
+display:flex;
+gap:10px;
+align-items:center;
+width:100%;
+}
+
+.row + .row{margin-top:10px;}
+
+.row input,
+.row select{
+flex:1;
+min-width:0;
+margin-top:0;
+}
+
+.row button{
+width:auto;
+flex:0 0 auto;
+margin-top:0;
+min-width:116px;
+}
+
+input,select,button{
+width:100%;
+min-height:52px;
+padding:0 15px;
+margin-top:6px;
+font-size:16px;
+font-family:inherit;
+border-radius:13px;
+border:1px solid var(--line);
+}
+
+input,select{background:#fbfcfa;color:var(--ink);outline:none;}
+input:focus,select:focus{border-color:#6d9283;box-shadow:0 0 0 4px rgba(22,79,59,.08);}
+
+button{
+background:var(--primary);
+color:white;
+border:none;
+font-weight:700;
+cursor:pointer;
+transition:transform .18s ease,background .18s ease,box-shadow .18s ease;
+}
+
+button:hover{background:var(--primary-strong);box-shadow:0 8px 18px rgba(22,79,59,.16);}
+button:active{transform:translateY(1px) scale(.99);}
+button:focus-visible{outline:3px solid rgba(198,169,105,.6);outline-offset:2px;}
+
+.action-button{
+height:52px;
+min-height:52px;
+margin-top:0;
+padding:0 18px;
+display:inline-flex;
+align-items:center;
+justify-content:center;
+gap:8px;
+border-radius:13px;
+}
+
+button:disabled{
+opacity:.55;
+cursor:not-allowed;
+}
+
+.secondary{background:#65756e;}
+.secondary:hover{background:#52615b;}
+.info{background:#243c33;}
+.danger{background:var(--danger);}
+.danger:hover{background:#8e3030;}
+
+.stock-delete{
+margin-top:10px;
+}
+
+.stock-manager{
+display:grid;
+gap:12px;
+}
+
+.portfolio-total{
+display:grid;
+grid-template-columns:44px minmax(0,1fr) auto;
+align-items:center;
+gap:12px;
+width:100%;
+min-height:0;
+margin:0;
+padding:14px;
+border:1px solid rgba(198,169,105,.38);
+border-radius:16px;
+background:linear-gradient(135deg,rgba(22,79,59,.97),rgba(13,58,42,.97));
+color:white;
+box-shadow:0 12px 26px rgba(13,58,42,.15);
+text-align:left;
+cursor:pointer;
+transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease;
+}
+
+.portfolio-total:hover{
+background:linear-gradient(135deg,rgba(22,79,59,.97),rgba(13,58,42,.97));
+border-color:rgba(234,217,168,.62);
+box-shadow:0 15px 30px rgba(13,58,42,.2);
+}
+
+.portfolio-total:active{transform:translateY(1px) scale(.995);}
+.portfolio-total:focus-visible{outline:3px solid rgba(198,169,105,.45);outline-offset:3px;}
+
+.portfolio-total-icon{
+width:44px;
+height:44px;
+display:grid;
+place-items:center;
+border:1px solid rgba(255,255,255,.18);
+border-radius:13px;
+background:rgba(255,255,255,.09);
+color:#ead9a8;
+}
+
+.portfolio-total-icon svg{width:22px;height:22px;}
+.portfolio-total-copy{min-width:0;}
+.portfolio-total-label{display:block;margin-bottom:2px;color:rgba(255,255,255,.68);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;}
+.portfolio-total strong{display:block;font-family:"Manrope",sans-serif;font-size:22px;line-height:1.15;letter-spacing:-.035em;}
+.portfolio-total-detail{display:block;margin-top:3px;color:rgba(255,255,255,.56);font-size:10px;line-height:1.35;}
+.portfolio-total-action{display:flex;align-items:center;gap:8px;}
+.portfolio-total-count{padding:6px 9px;border-radius:999px;background:rgba(255,255,255,.1);color:#e7d8ad;font-size:11px;font-weight:700;white-space:nowrap;}
+.portfolio-total-chevron{width:18px;height:18px;color:#ead9a8;transition:transform .22s ease;}
+.portfolio-total[aria-expanded="true"] .portfolio-total-chevron{transform:rotate(180deg);}
+
+.holding-values{
+display:grid;
+grid-template-rows:0fr;
+opacity:0;
+transform:translateY(-5px);
+transition:grid-template-rows .24s ease,opacity .18s ease,transform .24s ease;
+}
+
+.holding-values.is-open{
+grid-template-rows:1fr;
+opacity:1;
+transform:none;
+}
+
+.holding-values-inner{
+min-height:0;
+overflow:hidden;
+display:grid;
+gap:8px;
+}
+
+.holding-values-header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:12px;
+margin:2px 2px 0;
+color:var(--muted);
+font-size:12px;
+font-weight:700;
+}
+
+.holding-values-header span:last-child{font-weight:500;}
+
+.holding-values-list{
+display:grid;
+gap:7px;
+}
+
+.holding-value{
+display:grid;
+grid-template-columns:minmax(0,1fr) auto;
+align-items:center;
+gap:12px;
+padding:11px 12px;
+border:1px solid var(--line);
+border-radius:13px;
+background:#f7f9f7;
+}
+
+.holding-value-name{
+display:block;
+font-family:"Manrope",sans-serif;
+font-size:13px;
+font-weight:800;
+letter-spacing:.01em;
+}
+
+.holding-value-lot{
+display:block;
+margin-top:2px;
+color:var(--muted);
+font-size:11px;
+font-weight:600;
+}
+
+.holding-value-total{
+color:var(--primary);
+font-family:"Manrope",sans-serif;
+font-size:13px;
+font-weight:800;
+white-space:nowrap;
+}
+
+.holding-values-empty{
+margin:0;
+padding:12px;
+border:1px dashed #cbd6d0;
+border-radius:13px;
+background:#fafbf9;
+color:var(--muted);
+font-size:12px;
+line-height:1.45;
+text-align:center;
+}
+
+.stock-add-controls{
+display:grid;
+grid-template-columns:1fr;
+gap:10px;
+}
+
+.stock-add-controls input{display:none;margin:0;}
+.stock-add-controls.is-open{grid-template-columns:minmax(0,1fr) 116px;}
+.stock-add-controls.is-open input{display:block;animation:stockFieldReveal .2s ease both;}
+.stock-add-controls .action-button{width:100%;min-width:0;}
+
+.field-error{
+display:none;
+margin:-4px 2px 0;
+color:var(--danger);
+font-size:12px;
+font-weight:600;
+}
+
+.field-error.is-visible{display:block;}
+
+.stock-list-label{
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:12px;
+margin:2px 2px -5px;
+color:var(--muted);
+font-size:12px;
+font-weight:700;
+}
+
+.stock-list-label span:last-child{font-weight:500;}
+
+#stockSelect{
+height:148px;
+min-height:148px;
+margin:0;
+padding:7px;
+border-radius:15px;
+background:#f7f9f7;
+}
+
+#stockSelect option{
+min-height:38px;
+padding:10px 12px;
+border-radius:9px;
+font-weight:700;
+}
+
+#stockSelect option:checked{background:var(--primary);color:white;}
+
+.stock-actions{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px;
+margin-top:10px;
+}
+
+.stock-actions button{width:100%;min-width:0;}
+.stock-actions .stock-delete{margin-top:0;}
+
+@keyframes stockFieldReveal{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:none}}
+
+.section-note{
+margin:-7px 0 13px;
+font-size:13px;
+line-height:1.45;
+color:var(--muted);
+}
+
+.transaction-toolbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:12px;
+margin-bottom:12px;
+}
+
+.transaction-toolbar h3{
+margin:0;
+font-family:"Manrope",sans-serif;
+font-size:16px;
+}
+
+.view-toggle{
+display:flex;
+gap:4px;
+padding:4px;
+background:#edf1ee;
+border-radius:10px;
+}
+
+.view-toggle button{
+width:auto;
+min-width:0;
+margin:0;
+padding:8px 10px;
+border-radius:8px;
+background:transparent;
+color:#546e7a;
+font-size:13px;
+}
+
+.view-toggle button.active{
+background:var(--primary);
+color:white;
+}
+
+.transaction{
+position:relative;
+padding:14px;
+border-radius:12px;
+margin-bottom:10px;
+background:#f7f9f7;
+font-size:14px;
+cursor:pointer;
+outline:none;
+transition:transform .18s ease,background .18s ease,box-shadow .18s ease;
+}
+
+.transaction:hover{
+background:#f1f5f2;
+box-shadow:0 8px 22px rgba(24,55,43,.08);
+transform:translateY(-1px);
+}
+
+.transaction:focus-visible{
+box-shadow:0 0 0 3px rgba(198,169,105,.48),0 8px 22px rgba(24,55,43,.08);
+}
+
+.transaction:active{transform:scale(.995);}
+
+.buy{border-left:5px solid #b85c4b;}
+.sell{border-left:5px solid #3b8064;}
+
+.tx-number{
+position:absolute;
+top:8px;
+right:10px;
+font-size:11px;
+color:#888;
+}
+
+.tx-header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:8px;
+}
+
+.tx-header b{font-size:15px;}
+
+.tx-details{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:4px 12px;
+font-size:13px;
+color:#444;
+}
+
+.tx-details span{color:#222;font-weight:500;}
+
+.tx-edit-hint{
+display:inline-flex;
+align-items:center;
+gap:6px;
+margin-top:10px;
+color:var(--muted);
+font-size:11px;
+font-weight:600;
+}
+
+.tx-edit-hint::before{
+content:"";
+width:6px;
+height:6px;
+border-radius:50%;
+background:var(--accent);
+}
+
+.tx-delete{
+margin-top:10px;
+padding:8px 14px;
+font-size:13px;
+background:var(--danger);
+color:white;
+border:none;
+border-radius:8px;
+font-weight:600;
+cursor:pointer;
+width:auto;
+}
+
+.modal{
+position:fixed;
+top:0;left:0;
+width:100%;height:100%;
+background:rgba(10,28,21,.58);
+backdrop-filter:blur(6px);
+display:none;
+align-items:center;
+justify-content:center;
+padding:20px;
+z-index:2000;
+}
+
+.modal-content{
+background:white;
+width:100%;
+max-width:380px;
+border-radius:20px;
+padding:20px;
+box-shadow:0 24px 70px rgba(10,28,21,.24);
+}
+
+.modal-buttons{
+display:flex;
+gap:10px;
+margin-top:15px;
+}
+
+.modal-buttons button{flex:1;}
+.hidden{display:none;}
+
+.backup-card{
+position:relative;
+overflow:hidden;
+padding:0;
+}
+
+.backup-card::after{
+content:"";
+position:absolute;
+width:120px;
+height:120px;
+right:-58px;
+top:-62px;
+border-radius:50%;
+background:rgba(198,169,105,.13);
+pointer-events:none;
+}
+
+.backup-toggle{
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:12px;
+width:100%;
+min-height:58px;
+margin:0;
+padding:11px 14px;
+border-radius:19px;
+background:transparent;
+color:var(--ink);
+text-align:left;
+box-shadow:none;
+}
+
+.backup-toggle:hover{background:#f7faf7;box-shadow:none;}
+.backup-toggle:focus-visible{outline:3px solid rgba(198,169,105,.45);outline-offset:-3px;}
+.backup-toggle-copy{display:flex;align-items:center;gap:10px;min-width:0;}
+.backup-toggle-icon{width:34px;height:34px;display:grid;place-items:center;flex:0 0 34px;border-radius:11px;background:#edf5f1;color:var(--primary);}
+.backup-toggle-icon svg{width:18px;height:18px;}
+.backup-toggle-text{min-width:0;}
+.backup-toggle .card-title{margin:0;font-size:14px;}
+.backup-toggle-summary{display:block;margin-top:2px;color:var(--muted);font-size:11px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.backup-toggle-end{display:flex;align-items:center;gap:8px;flex:0 0 auto;}
+.backup-chevron{width:18px;height:18px;color:var(--muted);transition:transform .18s ease;}
+.backup-toggle[aria-expanded="true"] .backup-chevron{transform:rotate(180deg);}
+.backup-details{padding:2px 16px 16px;border-top:1px solid rgba(220,228,223,.72);}
+.backup-details[hidden]{display:none;}
+.backup-header{padding-top:14px;}
+.backup-header .card-title{margin-bottom:5px;}
+.backup-copy{margin:0;color:var(--muted);font-size:13px;line-height:1.55;}
+
+.backup-badge{
+flex:0 0 auto;
+padding:7px 10px;
+border-radius:999px;
+background:#edf5f1;
+color:var(--primary);
+font-size:11px;
+font-weight:700;
+}
+
+.backup-status{
+margin:14px 0 0;
+padding:11px 12px;
+border:1px solid var(--line);
+border-radius:12px;
+background:#f8faf8;
+color:var(--muted);
+font-size:12px;
+line-height:1.45;
+}
+
+.backup-status.is-success{border-color:#c9dfd3;background:#f0f7f3;color:#275b46;}
+.backup-status.is-warning{border-color:#ead9a8;background:#fffaf0;color:#725d28;}
+.backup-status.is-error{border-color:#e6c2c2;background:#fff5f5;color:#8e3030;}
+
+.backup-actions{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:9px;
+margin-top:12px;
+}
+
+.backup-actions button{min-height:44px;margin:0;padding:0 10px;font-size:12px;}
+.backup-actions .wide{grid-column:1/-1;}
+.backup-email-note{margin:10px 0 0;color:var(--muted);font-size:11px;word-break:break-word;}
+.backup-modal-copy{margin:0 0 12px;color:var(--muted);font-size:13px;line-height:1.55;}
+.backup-modal-error{display:none;margin:8px 0 0;color:var(--danger);font-size:12px;}
+.backup-modal-error.is-visible{display:block;}
+
+.backup-toast{
+position:fixed;
+left:50%;
+bottom:18px;
+z-index:4500;
+width:min(calc(100% - 28px),560px);
+padding:13px 42px 13px 15px;
+border:1px solid #c9dfd3;
+border-radius:15px;
+background:#f0f7f3;
+color:#275b46;
+box-shadow:0 16px 42px rgba(13,58,42,.2);
+font-size:12px;
+line-height:1.5;
+opacity:0;
+pointer-events:none;
+transform:translate(-50%,14px);
+transition:opacity .2s ease,transform .2s ease;
+}
+
+.backup-toast.is-visible{opacity:1;pointer-events:auto;transform:translate(-50%,0);}
+.backup-toast button{position:absolute;right:8px;top:8px;width:30px;min-height:30px;margin:0;padding:0;border-radius:9px;background:transparent;color:currentColor;font-size:20px;line-height:1;}
+.backup-toast button:hover{background:rgba(39,91,70,.09);box-shadow:none;}
+
+.trade-actions{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px;
+margin-top:14px;
+}
+
+.trade-actions button{width:100%;margin:0;}
+
+.splash{
+position:fixed;
+inset:0;
+z-index:5000;
+display:grid;
+place-items:center;
+overflow:hidden;
+background:var(--primary-strong);
+color:white;
+transition:opacity .55s ease,visibility .55s ease;
+}
+
+.splash::before,.splash::after{
+content:"";
+position:absolute;
+border:1px solid rgba(216,197,143,.22);
+border-radius:50%;
+}
+
+.splash::before{width:360px;height:360px;right:-150px;top:-110px;}
+.splash::after{width:250px;height:250px;left:-110px;bottom:-80px;}
+
+.splash.is-hidden{opacity:0;visibility:hidden;pointer-events:none;}
+
+.splash-content{
+position:relative;
+z-index:1;
+width:min(86vw,390px);
+text-align:left;
+animation:splashReveal .75s cubic-bezier(.22,1,.36,1) both;
+}
+
+.splash-mark{
+width:62px;
+height:62px;
+display:grid;
+place-items:center;
+margin-bottom:28px;
+border:1px solid rgba(255,255,255,.28);
+border-radius:20px;
+background:rgba(255,255,255,.08);
+font-family:"Manrope",sans-serif;
+font-size:20px;
+font-weight:800;
+color:#f1dfaa;
+}
+
+.splash-kicker{margin:0 0 10px;color:#d8c58f;font-size:12px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;}
+.splash h2{margin:0;font-family:"Manrope",sans-serif;font-size:34px;line-height:1.08;letter-spacing:-.045em;}
+.splash-line{width:54px;height:2px;margin:24px 0 18px;background:var(--accent);transform-origin:left;animation:lineGrow .7s .25s ease both;}
+.splash p{margin:0;max-width:310px;color:rgba(255,255,255,.72);font-size:14px;line-height:1.6;}
+
+@keyframes splashReveal{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@keyframes lineGrow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+
+@media (max-width:520px){
+.row.input-action{display:grid;grid-template-columns:minmax(0,1fr) 104px;}
+.row button{min-width:104px;}
+.card{padding:16px;}
+.backup-card{padding:0;}
+.portfolio-total{grid-template-columns:42px minmax(0,1fr);}
+.portfolio-total-action{grid-column:2;justify-self:start;}
+.stock-add-controls.is-open{grid-template-columns:minmax(0,1fr) 104px;}
+.backup-actions{grid-template-columns:1fr;}
+.backup-actions .wide{grid-column:auto;}
+}
+
+@media (prefers-reduced-motion:reduce){
+*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;}
+}
+</style>
+</head>
+
+<body>
+
+<div class="splash" id="splashScreen" role="status" aria-label="Uygulama açılıyor">
+<div class="splash-content">
+<div class="splash-mark">OK</div>
+<p class="splash-kicker">Kişisel Portföy</p>
+<h2>Osman Karaoğlu<br>için özel tasarlandı.</h2>
+<div class="splash-line"></div>
+<p>Hisse hareketlerini sade, güvenli ve düzenli biçimde takip etmek için.</p>
+</div>
+</div>
+
+<header class="header">
+<div class="header-inner">
+<div>
+<p class="eyebrow">Osman Karaoğlu'na Özel</p>
+<h1>Portföy Yönetimi</h1>
+</div>
+<div class="profile-mark" aria-hidden="true">OK</div>
+</div>
+</header>
+
+<div class="container">
+
+<section class="card install-card" id="installCard" aria-labelledby="installTitle">
+<div class="install-icon" aria-hidden="true">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12m0 0 4-4m-4 4-4-4"/><path d="M5 14v5h14v-5"/></svg>
+</div>
+<div class="install-copy">
+<h2 id="installTitle">iPhone'a uygulama olarak yükleyin</h2>
+<p>Safari'de <strong>Paylaş</strong> simgesine dokunun, <strong>Ana Ekrana Ekle</strong> seçeneğini açın ve <strong>Ekle</strong> deyin.</p>
+</div>
+<button class="install-dismiss" type="button" aria-label="Kurulum bilgisini kapat" onclick="dismissInstallCard()">×</button>
+</section>
+
+<div id="mainPage">
+
+<div class="card">
+<h2 class="card-title">Hisse Yönetimi</h2>
+<p class="section-note">Portföyünüze yeni bir hisse ekleyin veya kayıtlı hisseler üzerinde işlem yapın.</p>
+<div class="stock-manager">
+<button class="portfolio-total" id="portfolioTotalToggle" type="button" aria-expanded="false" aria-controls="holdingValues" onclick="toggleHoldingValues()">
+<span class="portfolio-total-icon" aria-hidden="true">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 18V9m5 9V5m5 13v-7m5 7V3"/><path d="M3 21h18"/></svg>
+</span>
+<span class="portfolio-total-copy">
+<span class="portfolio-total-label">Borsa Toplam Varlığı</span>
+<strong id="portfolioTotal" aria-live="polite">0 ₺</strong>
+<span class="portfolio-total-detail" id="portfolioTotalHint">Lot ve değer ayrıntıları için dokunun.</span>
+</span>
+<span class="portfolio-total-action">
+<span class="portfolio-total-count" id="stockCount">0 aktif hisse</span>
+<svg class="portfolio-total-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+</span>
+</button>
+
+<div class="holding-values" id="holdingValues" aria-hidden="true">
+<div class="holding-values-inner">
+<div class="holding-values-header"><span>Lot Varlığı Bulunan Hisseler</span><span>Hisse değeri</span></div>
+<div class="holding-values-list" id="holdingValuesList"></div>
+</div>
+</div>
+
+<div class="stock-add-controls" id="stockAddControls">
+<input type="text" id="newStock" placeholder="Hisse adını yazın" autocomplete="off" aria-label="Yeni hisse adı" oninput="setStockNameError(false)" onkeydown="handleStockInputKey(event)">
+<button class="action-button" id="stockAddButton" type="button" aria-expanded="false" onclick="handleStockAction()">Hisse Ekle</button>
+</div>
+<p class="field-error" id="stockNameError" role="alert">Lütfen bir hisse adı girin.</p>
+
+<label class="stock-list-label" for="stockSelect"><span>Kayıtlı Hisseler</span><span>Seçmek için dokunun</span></label>
+<select id="stockSelect" size="4" onchange="changeStock()" aria-label="Kayıtlı hisseler"></select>
+<div class="stock-actions">
+<button id="addTransactionButton" class="action-button secondary" onclick="openTradePage()">İşlem Ekle</button>
+<button id="deleteStockButton" class="action-button danger stock-delete" onclick="deleteStock()">Hisseyi Sil</button>
+</div>
+</div>
+</div>
+
+<div class="card">
+<button class="action-button info" onclick="openAnalysisModal()">Portföy Analizi</button>
+</div>
+
+<div class="card backup-card">
+<button class="backup-toggle" id="backupToggle" type="button" aria-expanded="false" aria-controls="backupDetails" onclick="toggleBackupCard()">
+<span class="backup-toggle-copy">
+<span class="backup-toggle-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0 4-4m-4 4-4-4"/><path d="M5 19h14"/></svg></span>
+<span class="backup-toggle-text"><span class="card-title">Yedekleme Yönetimi</span><span class="backup-toggle-summary">Ayrıntıları ve yedek işlemlerini göster</span></span>
+</span>
+<span class="backup-toggle-end"><span class="backup-badge">Dosya</span><svg class="backup-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></span>
+</button>
+<div class="backup-details" id="backupDetails" hidden>
+<div class="backup-header">
+<div>
+<h2 class="card-title">Dosya Yedeği</h2>
+<p class="backup-copy">Portföyünüzü <strong>borsa26 yedek.json</strong> dosyası olarak indirin. Mevcut Borsa26 yedeğinizi de buradan yükleyebilirsiniz.</p>
+</div>
+</div>
+<p class="backup-status" id="backupStatus" role="status" aria-live="polite">Portföyünüz bu cihazda saklanır.</p>
+<div class="backup-actions">
+<button class="action-button secondary" type="button" onclick="downloadBackup()">Yedeği İndir</button>
+<button class="action-button info" type="button" onclick="document.getElementById('backupFileInput').click()">Yedek Yükle</button>
+</div>
+<input class="hidden" id="backupFileInput" type="file" accept="application/json,.json" onchange="importBackupFile(event)">
+</div>
+</div>
+
+<div class="card">
+<div class="transaction-toolbar">
+<h3>İşlemler</h3>
+<div class="view-toggle" aria-label="İşlem görünümü">
+<button id="lastFiveButton" type="button" aria-pressed="false" onclick="setTransactionView('last5')">Son 5</button>
+<button id="allTransactionsButton" type="button" class="active" aria-pressed="true" onclick="setTransactionView('all')">Tümü</button>
+</div>
+</div>
+<div id="transactionList"></div>
+</div>
+
+</div>
+
+<div id="tradePage" class="hidden">
+<div class="card">
+<h2 class="card-title" id="tradePageTitle">Yeni İşlem</h2>
+<p class="section-note" id="tradePageNote">Seçili hisse için alış veya satış bilgilerini kaydedin.</p>
+<select id="type">
+<option value="buy">Alış</option>
+<option value="sell">Satış</option>
+</select>
+
+<input type="date" id="date">
+<input type="number" id="quantity" placeholder="Lot">
+<input type="number" id="unitPrice" placeholder="Birim Fiyat">
+<input type="number" id="totalAmount" placeholder="Toplam Tutar">
+
+<div class="trade-actions">
+<button class="action-button" id="saveTransactionButton" onclick="addTransaction()">İşlemi Kaydet</button>
+<button class="action-button secondary" onclick="closeTradePage()">Geri Dön</button>
+</div>
+</div>
+</div>
+
+</div>
+
+<div class="modal" id="analysisModal">
+<div class="modal-content">
+<h3>Analiz</h3>
+<div>Alış: <span id="aBuy"></span></div>
+<div>Satış: <span id="aSell"></span></div>
+<div>Net: <span id="aNet"></span></div>
+<div>Lot: <span id="aLot"></span></div>
+<div>Ortalama: <span id="aAvg"></span></div>
+<button onclick="closeAnalysisModal()">Kapat</button>
+</div>
+</div>
+
+<div class="backup-toast" id="backupToast" role="status" aria-live="polite"><span id="backupToastMessage"></span><button type="button" aria-label="Bildirimi kapat" onclick="hideBackupToast()">×</button></div>
+
+<script>
+
+let portfolio={}
+let currentStock=null
+let transactionView="all"
+let editingTransactionIndex=null
+let backupToastTimer=null
+const installCardStorageKey="borsa26InstallHintDismissed"
+
+function isStandaloneMode(){
+return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone===true
+}
+
+function updateInstallCard(){
+let installCard=document.getElementById("installCard")
+let isIos=/iphone|ipad|ipod/i.test(navigator.userAgent)
+let isDismissed=localStorage.getItem(installCardStorageKey)==="true"
+installCard.classList.toggle("is-visible",isIos && !isStandaloneMode() && !isDismissed)
+}
+
+function dismissInstallCard(){
+localStorage.setItem(installCardStorageKey,"true")
+updateInstallCard()
+}
+
+function loadStorage(){
+let data=localStorage.getItem("portfolio")
+portfolio=data?JSON.parse(data):{}
+}
+
+function save(){
+localStorage.setItem("portfolio",JSON.stringify(portfolio))
+}
+
+function setBackupStatus(message,type=""){
+let status=document.getElementById("backupStatus")
+status.textContent=message
+status.className="backup-status"+(type?" is-"+type:"")
+}
+
+function toggleBackupCard(){
+let toggle=document.getElementById("backupToggle")
+let details=document.getElementById("backupDetails")
+let isOpen=toggle.getAttribute("aria-expanded")==="true"
+toggle.setAttribute("aria-expanded",String(!isOpen))
+details.hidden=isOpen
+}
+
+function showBackupToast(message){
+let toast=document.getElementById("backupToast")
+document.getElementById("backupToastMessage").textContent=message
+toast.classList.add("is-visible")
+clearTimeout(backupToastTimer)
+backupToastTimer=setTimeout(hideBackupToast,8000)
+}
+
+function hideBackupToast(){
+document.getElementById("backupToast").classList.remove("is-visible")
+}
+
+function createBackupDocument(action="Elle indirilen yedek"){
+return {format:"borsa26-backup",version:1,createdAt:new Date().toISOString(),action,portfolio}
+}
+
+function saveBackupFile(documentData){
+let blob=new Blob([JSON.stringify(documentData,null,2)],{type:"application/json"})
+let url=URL.createObjectURL(blob)
+let link=document.createElement("a")
+link.href=url
+link.download="borsa26 yedek.json"
+document.body.appendChild(link)
+link.click()
+link.remove()
+setTimeout(()=>URL.revokeObjectURL(url),1000)
+return "İndirilenler/borsa26 yedek.json"
+}
+
+function downloadBackup(){
+let filePath=saveBackupFile(createBackupDocument())
+let message="Yedek alındı. Dosya yolu: "+filePath+"."
+setBackupStatus(message,"success")
+showBackupToast(message)
+}
+
+function isValidPortfolio(value){
+return value&&typeof value==="object"&&!Array.isArray(value)&&Object.values(value).every(stock=>stock&&typeof stock==="object"&&!Array.isArray(stock)&&Array.isArray(stock.transactions))
+}
+
+function mergePortfolioData(incomingPortfolio){
+let merged=structuredClone(portfolio)
+Object.entries(incomingPortfolio).forEach(([stockName,stock])=>{
+if(!merged[stockName]){
+merged[stockName]=structuredClone(stock)
+return
+}
+
+let knownTransactions=new Set(merged[stockName].transactions.map(transaction=>JSON.stringify([
+transaction.date,transaction.type,Number(transaction.qty),Number(transaction.unitPrice),Number(transaction.totalAmount)
+])))
+stock.transactions.forEach(transaction=>{
+let transactionKey=JSON.stringify([
+transaction.date,transaction.type,Number(transaction.qty),Number(transaction.unitPrice),Number(transaction.totalAmount)
+])
+if(!knownTransactions.has(transactionKey)){
+merged[stockName].transactions.push(structuredClone(transaction))
+knownTransactions.add(transactionKey)
+}
+})
+})
+return merged
+}
+
+function applyBackupDocument(documentData){
+let incomingPortfolio=documentData?.format==="borsa26-backup"?documentData.portfolio:documentData?.portfolio||documentData
+if(!isValidPortfolio(incomingPortfolio))throw new Error("Seçilen dosya geçerli bir Borsa26 yedeği değil.")
+
+portfolio=mergePortfolioData(incomingPortfolio)
+save()
+loadStocks(currentStock)
+setBackupStatus("Yedek mevcut veriler korunarak portföye birleştirildi.","success")
+}
+
+async function importBackupFile(event){
+let file=event.target.files?.[0]
+if(!file)return
+try{
+let documentData=JSON.parse(await file.text())
+applyBackupDocument(documentData)
+}catch(error){
+setBackupStatus(error.message||"Yedek dosyası okunamadı.","error")
+}finally{
+event.target.value=""
+}
+}
+
+function format(n){
+return Number(n).toLocaleString("tr-TR",{maximumFractionDigits:2})
+}
+
+function formatCurrency(n){
+return Number(n).toLocaleString("tr-TR",{style:"currency",currency:"TRY",maximumFractionDigits:2})
+}
+
+function calculateStockAnalysis(stock){
+let analysis=stock.transactions.reduce((summary,transaction)=>{
+let quantity=Number(transaction.qty||0)
+let totalAmount=Number(transaction.totalAmount||0)
+if(transaction.type==="buy"){
+summary.buy+=totalAmount
+summary.buyLot+=quantity
+}else{
+summary.sell+=totalAmount
+summary.sellLot+=quantity
+}
+return summary
+},{buy:0,sell:0,buyLot:0,sellLot:0})
+
+analysis.net=-(analysis.buy-analysis.sell)
+analysis.lot=analysis.buyLot-analysis.sellLot
+analysis.average=analysis.lot>0?analysis.net/analysis.lot:0
+return analysis
+}
+
+function toggleHoldingValues(){
+let toggle=document.getElementById("portfolioTotalToggle")
+let details=document.getElementById("holdingValues")
+let hint=document.getElementById("portfolioTotalHint")
+let isOpen=toggle.getAttribute("aria-expanded")==="true"
+
+toggle.setAttribute("aria-expanded",String(!isOpen))
+details.classList.toggle("is-open",!isOpen)
+details.setAttribute("aria-hidden",String(isOpen))
+hint.textContent=isOpen
+?"Lot ve değer ayrıntıları için dokunun."
+:"Ayrıntıları kapatmak için yeniden dokunun."
+}
+
+function calculatePortfolioTotal(){
+let holdings=Object.entries(portfolio).map(([name,stock])=>{
+let analysis=calculateStockAnalysis(stock)
+return {name,lot:analysis.lot,totalValue:analysis.net}
+})
+.filter(holding=>holding.lot>0)
+.sort((firstHolding,secondHolding)=>firstHolding.name.localeCompare(secondHolding.name,"tr"))
+
+let total=holdings.reduce((portfolioTotal,holding)=>portfolioTotal+holding.totalValue,0)
+let holdingsList=document.getElementById("holdingValuesList")
+holdingsList.innerHTML=""
+
+if(holdings.length===0){
+let emptyState=document.createElement("p")
+emptyState.className="holding-values-empty"
+emptyState.textContent="Lot bakiyesi bulunan bir hisse henüz yok."
+holdingsList.appendChild(emptyState)
+}else{
+holdings.forEach(holding=>{
+let row=document.createElement("div")
+row.className="holding-value"
+
+let identity=document.createElement("div")
+let name=document.createElement("span")
+name.className="holding-value-name"
+name.textContent=holding.name
+let lot=document.createElement("span")
+lot.className="holding-value-lot"
+lot.textContent=format(holding.lot)+" lot"
+identity.append(name,lot)
+
+let value=document.createElement("span")
+value.className="holding-value-total"
+value.textContent=formatCurrency(holding.totalValue)
+
+row.append(identity,value)
+holdingsList.appendChild(row)
+})
+}
+
+document.getElementById("portfolioTotal").innerText=formatCurrency(total)
+document.getElementById("stockCount").innerText=holdings.length+" aktif hisse"
+}
+
+function calculate(){
+calculatePortfolioTotal()
+if(!currentStock || !portfolio[currentStock]){
+document.getElementById("aBuy").innerText=0
+document.getElementById("aSell").innerText=0
+document.getElementById("aNet").innerText=0
+document.getElementById("aLot").innerText=0
+document.getElementById("aAvg").innerText=0
+return
+}
+
+let analysis=calculateStockAnalysis(portfolio[currentStock])
+
+document.getElementById("aBuy").innerText=format(analysis.buy)
+document.getElementById("aSell").innerText=format(analysis.sell)
+document.getElementById("aNet").innerText=format(analysis.net)
+document.getElementById("aLot").innerText=format(analysis.lot)
+document.getElementById("aAvg").innerText=format(analysis.average)
+}
+
+function handleStockAction(){
+let controls=document.getElementById("stockAddControls")
+if(!controls.classList.contains("is-open")){
+openStockForm()
+return
+}
+addStock()
+}
+
+function openStockForm(){
+let controls=document.getElementById("stockAddControls")
+let button=document.getElementById("stockAddButton")
+controls.classList.add("is-open")
+button.textContent="Kaydet"
+button.setAttribute("aria-expanded","true")
+document.getElementById("newStock").focus()
+}
+
+function closeStockForm(){
+let controls=document.getElementById("stockAddControls")
+let button=document.getElementById("stockAddButton")
+let input=document.getElementById("newStock")
+controls.classList.remove("is-open")
+button.textContent="Hisse Ekle"
+button.setAttribute("aria-expanded","false")
+input.value=""
+setStockNameError(false)
+}
+
+function setStockNameError(isVisible){
+document.getElementById("stockNameError").classList.toggle("is-visible",isVisible)
+}
+
+function handleStockInputKey(event){
+if(event.key==="Enter"){
+event.preventDefault()
+addStock()
+}
+if(event.key==="Escape")closeStockForm()
+}
+
+function addStock(){
+let s=document.getElementById("newStock").value.trim().toUpperCase()
+if(!s){
+setStockNameError(true)
+document.getElementById("newStock").focus()
+return
+}
+if(!portfolio[s])portfolio[s]={transactions:[]}
+save()
+loadStocks(s)
+closeStockForm()
+}
+
+function loadStocks(preferredStock=currentStock){
+let select=document.getElementById("stockSelect")
+let deleteButton=document.getElementById("deleteStockButton")
+let addTransactionButton=document.getElementById("addTransactionButton")
+select.innerHTML=""
+
+let stockNames=Object.keys(portfolio).sort((firstStock,secondStock)=>firstStock.localeCompare(secondStock,"tr"))
+
+stockNames.forEach(s=>{
+let o=document.createElement("option")
+o.value=s
+o.textContent=s
+select.appendChild(o)
+})
+
+if(stockNames.length){
+currentStock=stockNames.includes(preferredStock)?preferredStock:stockNames[0]
+select.value=currentStock
+select.disabled=false
+deleteButton.disabled=false
+addTransactionButton.disabled=false
+render()
+}else{
+let emptyOption=document.createElement("option")
+emptyOption.textContent="Henüz hisse eklenmedi"
+emptyOption.disabled=true
+select.appendChild(emptyOption)
+currentStock=null
+select.disabled=true
+deleteButton.disabled=true
+addTransactionButton.disabled=true
+render()
+}
+}
+
+function changeStock(){
+currentStock=document.getElementById("stockSelect").value
+render()
+}
+
+function deleteStock(){
+if(!currentStock || !portfolio[currentStock]) return
+
+if(confirm(currentStock+" hissesini ve tüm işlemlerini silmek istediğinize emin misiniz?")){
+delete portfolio[currentStock]
+save()
+currentStock=null
+loadStocks()
+}
+}
+
+function addTransaction(){
+if(!currentStock){alert("Hisse seç");return}
+
+let t={
+date:date.value,
+type:type.value,
+qty:Number(quantity.value),
+unitPrice:Number(unitPrice.value),
+totalAmount:Number(totalAmount.value)
+}
+
+let isEditing=editingTransactionIndex!==null
+if(!isEditing){
+portfolio[currentStock].transactions.push(t)
+}else{
+portfolio[currentStock].transactions[editingTransactionIndex]=t
+}
+save()
+
+closeTradePage()
+render()
+}
+
+function render(){
+let list=document.getElementById("transactionList")
+list.innerHTML=""
+
+let lastFiveButton=document.getElementById("lastFiveButton")
+let allTransactionsButton=document.getElementById("allTransactionsButton")
+lastFiveButton.classList.toggle("active",transactionView==="last5")
+allTransactionsButton.classList.toggle("active",transactionView==="all")
+lastFiveButton.setAttribute("aria-pressed",transactionView==="last5")
+allTransactionsButton.setAttribute("aria-pressed",transactionView==="all")
+
+if(!currentStock || !portfolio[currentStock]){
+calculate()
+return
+}
+
+let transactions=portfolio[currentStock].transactions.map((t,i)=>({transaction:t,index:i}))
+if(transactionView==="last5") transactions=transactions.slice(-5)
+
+transactions.forEach(item=>{
+let t=item.transaction
+let i=item.index
+let div=document.createElement("div")
+div.className="transaction "+(t.type==="buy"?"buy":"sell")
+div.tabIndex=0
+div.setAttribute("role","button")
+div.setAttribute("aria-label",`${i+1}. işlemi düzenle`)
+
+div.innerHTML=`
+<div class="tx-header">
+<b>${t.type==="buy"?"Alış":"Satış"}</b>
+<span class="tx-number">#${i+1}</span>
+</div>
+<div class="tx-details">
+<div>Tarih: <span>${t.date}</span></div>
+<div>Lot: <span>${format(t.qty)}</span></div>
+<div>Fiyat: <span>${format(t.unitPrice)}</span></div>
+<div>Toplam: <span>${format(t.totalAmount)}</span></div>
+</div>
+<span class="tx-edit-hint">Düzenlemek için dokunun</span><br>
+<button class="tx-delete" onclick="event.stopPropagation(); deleteDirectly(${i})">Sil</button>`
+
+div.addEventListener("click",event=>{
+if(event.target.closest("button"))return
+openEditTransaction(i)
+})
+
+div.addEventListener("keydown",event=>{
+if(event.target!==div || (event.key!=="Enter" && event.key!==" "))return
+event.preventDefault()
+openEditTransaction(i)
+})
+
+list.appendChild(div)
+})
+
+calculate()
+}
+
+function setTransactionView(view){
+transactionView=view
+render()
+}
+
+function deleteDirectly(i){
+if(confirm("Bu işlemi silmek istediğinize emin misiniz?")){
+portfolio[currentStock].transactions.splice(i,1)
+save()
+render()
+}
+}
+
+function openTradePage(){
+editingTransactionIndex=null
+resetTradeForm()
+setTradeMode(false)
+mainPage.classList.add("hidden")
+tradePage.classList.remove("hidden")
+}
+
+function openEditTransaction(index){
+if(!currentStock || !portfolio[currentStock]?.transactions[index])return
+
+let transaction=portfolio[currentStock].transactions[index]
+editingTransactionIndex=index
+type.value=transaction.type
+date.value=transaction.date
+quantity.value=transaction.qty
+unitPrice.value=transaction.unitPrice
+totalAmount.value=transaction.totalAmount
+setTradeMode(true)
+mainPage.classList.add("hidden")
+tradePage.classList.remove("hidden")
+}
+
+function setTradeMode(isEditing){
+tradePageTitle.textContent=isEditing?"İşlemi Düzenle":"Yeni İşlem"
+tradePageNote.textContent=isEditing
+?"İşlem bilgilerini güncelleyin ve değişiklikleri kaydedin."
+:"Seçili hisse için alış veya satış bilgilerini kaydedin."
+saveTransactionButton.textContent=isEditing?"Değişiklikleri Kaydet":"İşlemi Kaydet"
+}
+
+function resetTradeForm(){
+type.value="buy"
+date.value=""
+quantity.value=""
+unitPrice.value=""
+totalAmount.value=""
+}
+
+function closeTradePage(){
+tradePage.classList.add("hidden")
+mainPage.classList.remove("hidden")
+editingTransactionIndex=null
+resetTradeForm()
+setTradeMode(false)
+}
+
+function openAnalysisModal(){analysisModal.style.display="flex"}
+function closeAnalysisModal(){analysisModal.style.display="none"}
+
+loadStorage()
+loadStocks()
+updateInstallCard()
+window.addEventListener("load",()=>{
+setTimeout(()=>document.getElementById("splashScreen").classList.add("is-hidden"),1900)
+})
+
+if("serviceWorker" in navigator){
+window.addEventListener("load",()=>navigator.serviceWorker.register("./service-worker.js").catch(()=>{}))
+}
+
+</script>
+
+</body>
+</html>
