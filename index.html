@@ -75,19 +75,21 @@ font-size:22px;
 letter-spacing:-.03em;
 }
 
-.profile-mark{
-width:46px;
-height:46px;
-display:grid;
-place-items:center;
-flex:0 0 46px;
-border:1px solid rgba(255,255,255,.25);
-border-radius:15px;
-background:rgba(255,255,255,.1);
-font-family:"Manrope",sans-serif;
-font-weight:800;
-color:#f4e5b9;
+.header-backup-button{
+flex:0 0 auto;
+width:auto;
+min-height:44px;
+margin:0;
+padding:0 12px;
+border:1px solid rgba(255,255,255,.45);
+border-radius:14px;
+background:#286b52;
+color:#fff;
+font-size:13px;
+white-space:nowrap;
 }
+
+.header-backup-button:hover{background:#307b60;}
 
 .container{width:min(100%,680px);margin:0 auto;padding:18px max(14px,env(safe-area-inset-right)) calc(32px + env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-left));}
 
@@ -567,66 +569,21 @@ margin-top:15px;
 .modal-buttons button{flex:1;}
 .hidden{display:none;}
 
-.backup-card{
-position:relative;
-overflow:hidden;
-padding:0;
-}
-
-.backup-card::after{
-content:"";
-position:absolute;
-width:120px;
-height:120px;
-right:-58px;
-top:-62px;
-border-radius:50%;
-background:rgba(198,169,105,.13);
-pointer-events:none;
-}
-
-.backup-toggle{
-display:flex;
-align-items:center;
-justify-content:space-between;
-gap:12px;
-width:100%;
-min-height:58px;
-margin:0;
-padding:11px 14px;
+.backup-dialog{
+width:min(calc(100% - 32px),380px);
+max-height:calc(100% - 32px);
+padding:16px;
+border:1px solid var(--line);
 border-radius:19px;
-background:transparent;
+background:var(--surface);
 color:var(--ink);
-text-align:left;
-box-shadow:none;
+box-shadow:var(--shadow);
 }
 
-.backup-toggle:hover{background:#f7faf7;box-shadow:none;}
-.backup-toggle:focus-visible{outline:3px solid rgba(198,169,105,.45);outline-offset:-3px;}
-.backup-toggle-copy{display:flex;align-items:center;gap:10px;min-width:0;}
-.backup-toggle-icon{width:34px;height:34px;display:grid;place-items:center;flex:0 0 34px;border-radius:11px;background:#edf5f1;color:var(--primary);}
-.backup-toggle-icon svg{width:18px;height:18px;}
-.backup-toggle-text{min-width:0;}
-.backup-toggle .card-title{margin:0;font-size:14px;}
-.backup-toggle-summary{display:block;margin-top:2px;color:var(--muted);font-size:11px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.backup-toggle-end{display:flex;align-items:center;gap:8px;flex:0 0 auto;}
-.backup-chevron{width:18px;height:18px;color:var(--muted);transition:transform .18s ease;}
-.backup-toggle[aria-expanded="true"] .backup-chevron{transform:rotate(180deg);}
-.backup-details{padding:2px 16px 16px;border-top:1px solid rgba(220,228,223,.72);}
-.backup-details[hidden]{display:none;}
-.backup-header{padding-top:14px;}
-.backup-header .card-title{margin-bottom:5px;}
+.backup-dialog::backdrop{background:rgba(13,35,26,.52);}
+.backup-dialog .card-title{margin-bottom:5px;}
 .backup-copy{margin:0;color:var(--muted);font-size:13px;line-height:1.55;}
-
-.backup-badge{
-flex:0 0 auto;
-padding:7px 10px;
-border-radius:999px;
-background:#edf5f1;
-color:var(--primary);
-font-size:11px;
-font-weight:700;
-}
+.backup-dialog-close{margin-top:12px;}
 
 .backup-status{
 margin:14px 0 0;
@@ -749,7 +706,6 @@ color:#f1dfaa;
 .row.input-action{display:grid;grid-template-columns:minmax(0,1fr) 104px;}
 .row button{min-width:104px;}
 .card{padding:16px;}
-.backup-card{padding:0;}
 .portfolio-total{grid-template-columns:42px minmax(0,1fr);}
 .portfolio-total-action{grid-column:2;justify-self:start;}
 .stock-add-controls.is-open{grid-template-columns:minmax(0,1fr) 104px;}
@@ -781,7 +737,7 @@ color:#f1dfaa;
 <p class="eyebrow">Osman Karaoğlu'na Özel</p>
 <h1>Portföy Yönetimi</h1>
 </div>
-<div class="profile-mark" aria-hidden="true">OK</div>
+<button class="header-backup-button" type="button" aria-haspopup="dialog" aria-controls="backupDialog" onclick="document.getElementById('backupDialog').showModal()">Yedekleme</button>
 </div>
 </header>
 
@@ -845,30 +801,6 @@ color:#f1dfaa;
 <button class="action-button info" onclick="openAnalysisModal()">Portföy Analizi</button>
 </div>
 
-<div class="card backup-card">
-<button class="backup-toggle" id="backupToggle" type="button" aria-expanded="false" aria-controls="backupDetails" onclick="toggleBackupCard()">
-<span class="backup-toggle-copy">
-<span class="backup-toggle-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0 4-4m-4 4-4-4"/><path d="M5 19h14"/></svg></span>
-<span class="backup-toggle-text"><span class="card-title">Yedekleme Yönetimi</span><span class="backup-toggle-summary">Ayrıntıları ve yedek işlemlerini göster</span></span>
-</span>
-<span class="backup-toggle-end"><span class="backup-badge">Dosya</span><svg class="backup-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></span>
-</button>
-<div class="backup-details" id="backupDetails" hidden>
-<div class="backup-header">
-<div>
-<h2 class="card-title">Dosya Yedeği</h2>
-<p class="backup-copy">Portföyünüzü <strong>borsa26 yedek.json</strong> dosyası olarak indirin. Mevcut Borsa26 yedeğinizi de buradan yükleyebilirsiniz.</p>
-</div>
-</div>
-<p class="backup-status" id="backupStatus" role="status" aria-live="polite">Portföyünüz bu cihazda saklanır.</p>
-<div class="backup-actions">
-<button class="action-button secondary" type="button" onclick="downloadBackup()">Yedeği İndir</button>
-<button class="action-button info" type="button" onclick="document.getElementById('backupFileInput').click()">Yedek Yükle</button>
-</div>
-<input class="hidden" id="backupFileInput" type="file" accept="application/json,.json" onchange="importBackupFile(event)">
-</div>
-</div>
-
 <div class="card">
 <div class="transaction-toolbar">
 <h3>İşlemler</h3>
@@ -917,6 +849,20 @@ color:#f1dfaa;
 </div>
 </div>
 
+<dialog class="backup-dialog" id="backupDialog" aria-labelledby="backupTitle">
+<h2 class="card-title" id="backupTitle">Dosya Yedeği</h2>
+<p class="backup-copy">Portföyünüzü <strong>borsa26 yedek.json</strong> dosyası olarak indirin. Mevcut Borsa26 yedeğinizi de buradan yükleyebilirsiniz.</p>
+<p class="backup-status" id="backupStatus" role="status" aria-live="polite">Portföyünüz bu cihazda saklanır.</p>
+<div class="backup-actions">
+<button class="action-button secondary" type="button" onclick="downloadBackup()">Yedeği İndir</button>
+<button class="action-button info" type="button" onclick="document.getElementById('backupFileInput').click()">Yedek Yükle</button>
+</div>
+<input class="hidden" id="backupFileInput" type="file" accept="application/json,.json" onchange="importBackupFile(event)">
+<form method="dialog" class="backup-dialog-close">
+<button class="action-button secondary" autofocus>Kapat</button>
+</form>
+</dialog>
+
 <div class="backup-toast" id="backupToast" role="status" aria-live="polite"><span id="backupToastMessage"></span><button type="button" aria-label="Bildirimi kapat" onclick="hideBackupToast()">×</button></div>
 
 <script>
@@ -957,14 +903,6 @@ function setBackupStatus(message,type=""){
 let status=document.getElementById("backupStatus")
 status.textContent=message
 status.className="backup-status"+(type?" is-"+type:"")
-}
-
-function toggleBackupCard(){
-let toggle=document.getElementById("backupToggle")
-let details=document.getElementById("backupDetails")
-let isOpen=toggle.getAttribute("aria-expanded")==="true"
-toggle.setAttribute("aria-expanded",String(!isOpen))
-details.hidden=isOpen
 }
 
 function showBackupToast(message){
