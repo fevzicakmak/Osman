@@ -429,6 +429,7 @@ color:var(--muted);
 
 .transaction-toolbar{
 display:flex;
+flex-wrap:wrap;
 justify-content:space-between;
 align-items:center;
 gap:12px;
@@ -458,6 +459,7 @@ border-radius:8px;
 background:transparent;
 color:#546e7a;
 font-size:13px;
+white-space:nowrap;
 }
 
 .view-toggle button.active{
@@ -815,9 +817,10 @@ color:#f1dfaa;
 <div class="card">
 <div class="transaction-toolbar">
 <h3>İşlemler</h3>
-<div class="view-toggle" aria-label="İşlem görünümü">
-<button id="lastFiveButton" type="button" aria-pressed="false" onclick="setTransactionView('last5')">Son 5</button>
-<button id="allTransactionsButton" type="button" class="active" aria-pressed="true" onclick="setTransactionView('all')">Tümü</button>
+<div class="view-toggle" role="group" aria-label="İşlem görünümü">
+<button type="button" aria-pressed="false" data-transaction-limit="5" onclick="setTransactionView(5)">Son 5</button>
+<button type="button" aria-pressed="false" data-transaction-limit="10" onclick="setTransactionView(10)">Son 10</button>
+<button type="button" aria-pressed="false" data-transaction-limit="20" onclick="setTransactionView(20)">Son 20</button>
 </div>
 </div>
 <div id="transactionList"></div>
@@ -880,7 +883,7 @@ color:#f1dfaa;
 
 let portfolio={}
 let currentStock=null
-let transactionView="all"
+let transactionLimit=null
 let editingTransactionIndex=null
 let backupToastTimer=null
 const installCardStorageKey="borsa26InstallHintDismissed"
@@ -1241,12 +1244,11 @@ function render(){
 let list=document.getElementById("transactionList")
 list.innerHTML=""
 
-let lastFiveButton=document.getElementById("lastFiveButton")
-let allTransactionsButton=document.getElementById("allTransactionsButton")
-lastFiveButton.classList.toggle("active",transactionView==="last5")
-allTransactionsButton.classList.toggle("active",transactionView==="all")
-lastFiveButton.setAttribute("aria-pressed",transactionView==="last5")
-allTransactionsButton.setAttribute("aria-pressed",transactionView==="all")
+document.querySelectorAll("[data-transaction-limit]").forEach(button=>{
+let active=Number(button.dataset.transactionLimit)===transactionLimit
+button.classList.toggle("active",active)
+button.setAttribute("aria-pressed",String(active))
+})
 
 if(!currentStock || !portfolio[currentStock]){
 calculate()
@@ -1254,7 +1256,7 @@ return
 }
 
 let transactions=portfolio[currentStock].transactions.map((t,i)=>({transaction:t,index:i}))
-if(transactionView==="last5") transactions=transactions.slice(-5)
+if(transactionLimit!==null) transactions=transactions.slice(-transactionLimit)
 
 transactions.forEach(item=>{
 let t=item.transaction
@@ -1296,8 +1298,8 @@ list.appendChild(div)
 calculate()
 }
 
-function setTransactionView(view){
-transactionView=view
+function setTransactionView(limit){
+transactionLimit=transactionLimit===limit?null:limit
 render()
 }
 
